@@ -18,7 +18,7 @@
 </p>
 
 <p align="center">
-  <a href="http://39.105.66.226/hr/">在线介绍页</a> ·
+  <a href="http://39.105.66.226/xiaomi/">在线介绍页</a> ·
   <a href="#框架">框架</a> ·
   <a href="#技术栈">技术栈</a> ·
   <a href="#快速开始">快速开始</a> ·
