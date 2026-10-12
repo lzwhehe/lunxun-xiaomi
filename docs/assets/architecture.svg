@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -20 940 460" role="img" aria-label="轮询小秘架构：定时调度和 BOSS 会话触发 LLM Agent；Agent 读对话、分类、起草回复；规则闸门把结果分成自动回复、交给本人和只记录三路；所有结果写入日志并每轮推送 Telegram"><style>
+:root{}
+svg{--bg:#edf0f4;--surface:#ffffff;--ink:#132030;--mute:#5b6878;--line:#d5dbe3;--accent:#2453d6;--accent-soft:#e3eafb;--go:#1d7f55;--go-soft:#e1f2ea;--hold:#a8701a;--hold-soft:#f8eedc}
+@media (prefers-color-scheme:dark){svg{--bg:#0d141d;--surface:#152130;--ink:#e3e9f1;--mute:#93a1b2;--line:#26364a;--accent:#86a6ff;--accent-soft:#1a2a48;--go:#5fd39c;--go-soft:#14302a;--hold:#e6b25c;--hold-soft:#33291a}}
+.frame{fill:var(--surface);stroke:var(--line)}
+text{font:13.5px -apple-system,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:var(--ink)}
+.sm{font-size:11.5px;fill:var(--mute)}
+.lane{font:600 11px ui-monospace,Consolas,monospace;letter-spacing:.12em;fill:var(--mute)}
+.lane-ln{stroke:var(--line);stroke-width:1;stroke-dasharray:2 4}
+.n{fill:var(--surface);stroke:var(--line);stroke-width:1.3}
+.core{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+.chip{fill:var(--surface);stroke:var(--accent);stroke-width:1;stroke-opacity:.45}
+.chip-n{font:600 11px ui-monospace,Consolas,monospace;fill:var(--accent)}
+.gate{fill:var(--hold-soft);stroke:var(--hold);stroke-width:1.4}
+.auto{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.3}
+.human{fill:var(--go-soft);stroke:var(--go);stroke-width:1.3}
+.skip{fill:var(--bg);stroke:var(--line);stroke-width:1.3}
+.bar{fill:var(--bg);stroke:var(--line);stroke-width:1.2}
+.ln{fill:none;stroke:var(--mute);stroke-width:1.4}.ln-a{fill:none;stroke:var(--accent);stroke-width:1.4}.ln-g{fill:none;stroke:var(--go);stroke-width:1.4}
+.dash{fill:none;stroke:var(--mute);stroke-width:1.2;stroke-dasharray:4 4}
+.ah{fill:var(--mute)}.ah-a{fill:var(--accent)}.ah-g{fill:var(--go)}
+.tag-a{font-weight:600;font-size:11.5px;fill:var(--accent)}.tag-g{font-weight:600;font-size:11.5px;fill:var(--go)}.tag-m{font-weight:600;font-size:11.5px;fill:var(--mute)}
+.title{font-weight:700}
+</style><rect class="frame" x="-20" y="-20" width="940" height="460" rx="16"/>
+  <text class="lane" x="20" y="20">触发</text>
+  <text class="lane" x="225" y="20">AGENT</text>
+  <text class="lane" x="535" y="20">闸门</text>
+  <text class="lane" x="705" y="20">去向</text>
+  <line class="lane-ln" x1="195" y1="32" x2="195" y2="318"/>
+  <line class="lane-ln" x1="505" y1="32" x2="505" y2="318"/>
+  <line class="lane-ln" x1="675" y1="32" x2="675" y2="318"/>
+
+  <rect class="n" x="20" y="72" width="150" height="64" rx="12"/>
+  <text class="title" x="40" y="99">定时调度</text><text class="sm" x="40" y="120">每天 20 轮 · cron</text>
+  <rect class="n" x="20" y="200" width="150" height="64" rx="12"/>
+  <text class="title" x="40" y="227">BOSS 直聘</text><text class="sm" x="40" y="248">独立浏览器标签</text>
+
+  <rect class="core" x="220" y="40" width="260" height="270" rx="16"/>
+  <text class="title" x="240" y="68">LLM Agent</text>
+  <text class="sm" x="240" y="88">只用本人确认过的事实</text>
+  <rect class="chip" x="240" y="104" width="220" height="44" rx="10"/><text class="chip-n" x="256" y="131">01</text><text x="284" y="131">读取会话，找新消息</text>
+  <rect class="chip" x="240" y="170" width="220" height="44" rx="10"/><text class="chip-n" x="256" y="197">02</text><text x="284" y="197">通读上下文，判断类型</text>
+  <rect class="chip" x="240" y="236" width="220" height="44" rx="10"/><text class="chip-n" x="256" y="263">03</text><text x="284" y="263">起草回复：感谢 → 兴趣</text>
+  <path class="ln-a" d="M350 148 V164"/><path class="ah-a" d="M350 170 l-4 -7 h8z"/>
+  <path class="ln-a" d="M350 214 V230"/><path class="ah-a" d="M350 236 l-4 -7 h8z"/>
+
+  <path class="ln" d="M170 104 H196 V126 H212"/><path class="ah" d="M219 126 l-8 -4 v8z"/>
+  <path class="ln" d="M170 232 H196 V192 H212"/><path class="ah" d="M219 192 l-8 -4 v8z"/>
+
+  <path class="gate" d="M590 110 L650 175 L590 240 L530 175 Z"/>
+  <text class="title" x="590" y="172" text-anchor="middle">规则闸门</text>
+  <text class="sm" x="590" y="191" text-anchor="middle">谁来决定？</text>
+  <path class="ln" d="M480 175 H522"/><path class="ah" d="M529 175 l-8 -4 v8z"/>
+
+  <path class="ln-a" d="M650 175 H668 V78 H688"/><path class="ah-a" d="M695 78 l-8 -4 v8z"/>
+  <path class="ln-g" d="M650 175 H688"/><path class="ah-g" d="M695 175 l-8 -4 v8z"/>
+  <path class="ln" d="M650 175 H668 V272 H688"/><path class="ah" d="M695 272 l-8 -4 v8z"/>
+
+  <rect class="auto" x="700" y="46" width="180" height="64" rx="12"/>
+  <text class="tag-a" x="718" y="72">自动</text><text class="title" x="752" y="72">礼貌回复</text><text class="sm" x="718" y="94">发回 BOSS，必要时发简历</text>
+  <rect class="human" x="700" y="143" width="180" height="64" rx="12"/>
+  <text class="tag-g" x="718" y="169">本人</text><text class="title" x="752" y="169">Telegram 推送</text><text class="sm" x="718" y="191">面试时间等由他亲自确认</text>
+  <rect class="skip" x="700" y="240" width="180" height="64" rx="12"/>
+  <text class="tag-m" x="718" y="266">忽略</text><text class="title" x="752" y="266">只记录</text><text class="sm" x="718" y="288">与求职无关的推广</text>
+
+  <path class="dash" d="M350 310 V350"/>
+  <path class="dash" d="M790 304 V350"/>
+  <rect class="bar" x="220" y="350" width="660" height="52" rx="12"/>
+  <text class="title" x="240" y="381">每轮收尾</text>
+  <text class="sm" x="320" y="381">写入日志 · 去重（同一条不回两次）· 刷新状态看板 · 每轮 Telegram 汇总</text>
+</svg>

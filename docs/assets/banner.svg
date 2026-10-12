@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" role="img" aria-label="轮询小秘：替你值班的求职助理 Agent">
+<style>
+  .bg{fill:#edf0f4}.ink{fill:#132030}.mute{fill:#5b6878}.acc{fill:#2453d6}.off{fill:#d5dbe3}
+  .log{fill:#132030}.li{fill:#dbe4ef}.ld{fill:#8796a8}.lg{fill:#6fd7a4}.lh{fill:#f0bd6a}.la{fill:#9db6ff}
+  .d{font-family:"Songti SC","STSong","Noto Serif CJK SC","Source Han Serif SC","SimSun",serif;font-weight:700}
+  .b{font-family:-apple-system,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif}
+  .m{font-family:ui-monospace,"SF Mono","Cascadia Mono",Consolas,monospace}
+  @media (prefers-color-scheme:dark){.bg{fill:#0d141d}.ink{fill:#e3e9f1}.mute{fill:#93a1b2}.acc{fill:#86a6ff}.off{fill:#26364a}.log{fill:#09101a}}
+</style>
+<rect class="bg" width="1200" height="300" rx="18"/>
+<text class="m acc" x="64" y="78" font-size="15" letter-spacing="2.5" font-weight="600">LUNXUN-XIAOMI · 求职助理 AGENT</text>
+<text class="d ink" x="62" y="146" font-size="62">轮询小秘</text>
+<text class="b mute" x="64" y="190" font-size="20">定时查看 BOSS 直聘 · 结合上下文礼貌回复 · 每轮 Telegram 推送</text>
+<text class="b mute" x="64" y="220" font-size="20">需要拍板的事，一律留给本人</text>
+<g id="strip">
+  <text class="m mute" x="64" y="262" font-size="12">每天 20 轮</text>
+  <rect class="acc" x="150" y="250" width="12" height="14" rx="2"/>
+  <rect class="off" x="166" y="250" width="12" height="14" rx="2"/><rect class="off" x="182" y="250" width="12" height="14" rx="2"/><rect class="off" x="198" y="250" width="12" height="14" rx="2"/><rect class="off" x="214" y="250" width="12" height="14" rx="2"/>
+  <rect class="acc" x="230" y="250" width="12" height="14" rx="2"/><rect class="acc" x="246" y="250" width="12" height="14" rx="2"/><rect class="acc" x="262" y="250" width="12" height="14" rx="2"/><rect class="acc" x="278" y="250" width="12" height="14" rx="2"/><rect class="acc" x="294" y="250" width="12" height="14" rx="2"/><rect class="acc" x="310" y="250" width="12" height="14" rx="2"/><rect class="acc" x="326" y="250" width="12" height="14" rx="2"/><rect class="acc" x="342" y="250" width="12" height="14" rx="2"/><rect class="acc" x="358" y="250" width="12" height="14" rx="2"/><rect class="acc" x="374" y="250" width="12" height="14" rx="2"/><rect class="acc" x="390" y="250" width="12" height="14" rx="2"/><rect class="acc" x="406" y="250" width="12" height="14" rx="2"/><rect class="acc" x="422" y="250" width="12" height="14" rx="2"/><rect class="acc" x="438" y="250" width="12" height="14" rx="2"/><rect class="acc" x="454" y="250" width="12" height="14" rx="2"/><rect class="acc" x="470" y="250" width="12" height="14" rx="2"/><rect class="acc" x="486" y="250" width="12" height="14" rx="2"/><rect class="acc" x="502" y="250" width="12" height="14" rx="2"/><rect class="acc" x="518" y="250" width="12" height="14" rx="2"/>
+  <text class="m mute" x="542" y="262" font-size="12">cron 7 0,5-23 * * *</text>
+</g>
+<rect class="log" x="730" y="48" width="410" height="204" rx="14"/>
+<text class="m ld" x="752" y="76" font-size="12">run.log · 示例</text>
+<text class="m li" x="752" y="106" font-size="13"><tspan class="ld">10:07:02</tspan>  唤醒，打开会话列表</text>
+<text class="m li" x="752" y="130" font-size="13"><tspan class="ld">10:07:09</tspan>  新消息 <tspan class="la">1</tspan> 条 · 安全工程师</text>
+<text class="m li" x="752" y="154" font-size="13"><tspan class="ld">10:07:16</tspan>  分类：<tspan class="la">询问意向</tspan> → 自动回复</text>
+<text class="m li" x="752" y="178" font-size="13"><tspan class="ld">10:07:24</tspan>  <tspan class="lg">已回复</tspan> 感谢 · 兴趣 · 回应</text>
+<text class="m li" x="752" y="202" font-size="13"><tspan class="ld">10:07:25</tspan>  <tspan class="lg">已推送</tspan> Telegram → 本人</text>
+<text class="m li" x="752" y="226" font-size="13"><tspan class="ld">10:07:26</tspan>  面试时间 <tspan class="lh">留给本人确认</tspan></text>
+</svg>
