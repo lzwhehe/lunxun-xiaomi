@@ -1,0 +1,21 @@
+{
+  "updated": "2026-10-12 10:07",
+  "total_conversations": 5,
+  "conversations": [
+    {"time": "10:02", "hr": "王女士", "company": "示例科技", "title": "校招HR", "position": "安全工程师", "stage": "询问意向", "note": "HR 想聊一聊；已回复并发送附件简历"},
+    {"time": "09:41", "hr": "李先生", "company": "示例云", "title": "招聘经理", "position": "AI 安全研究员", "stage": "面试邀约", "note": "已回复愿意参加，需本人确认时间"},
+    {"time": "昨天", "hr": "赵先生", "company": "示例网络", "title": "HR", "position": "渗透测试工程师", "stage": "拒绝", "note": "已礼貌致谢"},
+    {"time": "昨天", "hr": "陈女士", "company": "示例安全", "title": "招聘者", "stage": "已投递"},
+    {"time": "昨天", "hr": "周先生", "company": "示例传媒", "title": "人事", "position": "直播运营", "stage": "无关", "note": "无关岗位，不回复"}
+  ],
+  "replies": [
+    {"datetime": "2026-10-12 10:02", "company": "示例科技", "position": "安全工程师", "hr": "王女士", "type": "询问意向",
+     "said": "你好，可以聊一聊哦～",
+     "my_reply": "王女士您好，非常感谢您抽空回复！我是张三的求职助理「轮询小秘」……",
+     "suggestion": "已回复并发简历，等待 HR"},
+    {"datetime": "2026-10-12 09:41", "company": "示例云", "position": "AI 安全研究员", "hr": "李先生", "type": "面试邀约",
+     "said": "方便这周四下午线上面试吗？",
+     "my_reply": "李先生您好，非常感谢您的面试邀请！……具体时间三会亲自和您确认。",
+     "suggestion": "需本人确认面试时间"}
+  ]
+}

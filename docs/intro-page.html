@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>轮询小秘</title>
+<style>
+/* Layout: a duty-desk page. Hero pairs the promise with a sample run log; below, the 24h duty strip, the round as a real sequence, the architecture, the rules. */
+:root{
+  --bg:#edf0f4; --surface:#ffffff; --ink:#132030; --mute:#5b6878; --line:#d5dbe3;
+  --accent:#2453d6; --accent-soft:#e3eafb; --go:#1d7f55; --go-soft:#e1f2ea; --hold:#a8701a; --hold-soft:#f8eedc;
+  --log-bg:#132030; --log-ink:#dbe4ef; --log-dim:#8796a8;
+  --f-display:"Songti SC","STSong","Noto Serif CJK SC","Source Han Serif SC","SimSun",serif;
+  --f-body:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+  --f-mono:ui-monospace,"SF Mono","Cascadia Mono",Consolas,"Menlo",monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d141d; --surface:#152130; --ink:#e3e9f1; --mute:#93a1b2; --line:#26364a;
+  --accent:#86a6ff; --accent-soft:#1a2a48; --go:#5fd39c; --go-soft:#14302a; --hold:#e6b25c; --hold-soft:#33291a;
+  --log-bg:#09101a; --log-ink:#dbe4ef; --log-dim:#7d8ca0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d141d; --surface:#152130; --ink:#e3e9f1; --mute:#93a1b2; --line:#26364a;
+  --accent:#86a6ff; --accent-soft:#1a2a48; --go:#5fd39c; --go-soft:#14302a; --hold:#e6b25c; --hold-soft:#33291a;
+  --log-bg:#09101a; --log-ink:#dbe4ef; --log-dim:#7d8ca0; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.75 var(--f-body);padding-inline:16px;padding-block:0}
+main{max-width:980px;margin:0 auto;padding-block:40px 64px;display:grid;gap:56px}
+h1,h2{font-family:var(--f-display);font-weight:700;text-wrap:balance;margin:0;letter-spacing:.01em}
+h1{font-size:clamp(30px,5.2vw,46px);line-height:1.22}
+h2{font-size:24px;line-height:1.3}
+p{margin:0}
+.eyebrow{font:600 12px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.lead{color:var(--mute);max-width:34em;font-size:16px}
+.sec{display:grid;gap:18px}
+.sec-head{display:grid;gap:6px}
+.sec-head p{color:var(--mute);max-width:40em}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:36px;align-items:center}
+.hero > *{min-width:0}
+.hero-copy{display:grid;gap:18px}
+.sig{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13.5px;color:var(--mute)}
+.sig b{color:var(--ink);font-weight:600}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--go);margin-right:6px;vertical-align:1px;box-shadow:0 0 0 4px var(--go-soft)}
+@media (prefers-reduced-motion:no-preference){.dot{animation:pulse 2.4s ease-in-out infinite}}
+@keyframes pulse{50%{box-shadow:0 0 0 7px transparent}}
+
+.log{background:var(--log-bg);color:var(--log-ink);border-radius:14px;padding:18px 18px 16px;font:12.5px/1.85 var(--f-mono);overflow-x:auto;box-shadow:0 18px 40px -24px rgba(10,20,40,.55)}
+.log-top{display:flex;justify-content:space-between;gap:12px;color:var(--log-dim);margin-bottom:10px;font-size:11.5px;letter-spacing:.04em}
+.log-row{display:grid;grid-template-columns:auto 1fr;gap:12px;white-space:nowrap}
+.log-row span:first-child{color:var(--log-dim)}
+.k-go{color:#6fd7a4}.k-hold{color:#f0bd6a}.k-acc{color:#9db6ff}
+
+/* duty strip */
+.strip{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 18px 12px;overflow-x:auto}
+.strip svg{display:block;width:100%;min-width:560px;height:auto}
+.strip text{font:11px var(--f-mono);fill:var(--mute)}
+.strip .on{fill:var(--accent)}
+.strip .off{fill:var(--line)}
+.strip .base{stroke:var(--line);stroke-width:1}
+.legend{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:13px;color:var(--mute);margin-top:6px}
+.legend code{font:12.5px var(--f-mono);color:var(--ink);background:var(--accent-soft);padding:1px 6px;border-radius:5px}
+
+/* round steps */
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;counter-reset:s}
+.steps li{background:var(--surface);padding:18px 18px 20px;display:grid;gap:4px;align-content:start;counter-increment:s;min-width:0}
+.steps li::before{content:counter(s,decimal-leading-zero);font:600 12px var(--f-mono);color:var(--accent);letter-spacing:.08em}
+.steps b{font-size:16px}
+.steps span{color:var(--mute);font-size:14px}
+
+/* architecture */
+.arch{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 20px 16px;overflow-x:auto}
+.arch svg{display:block;width:100%;min-width:720px;height:auto}
+.arch text{font:13.5px var(--f-body);fill:var(--ink)}
+.arch .sm{font-size:11.5px;fill:var(--mute)}
+.arch .lane{font:600 11px var(--f-mono);letter-spacing:.12em;fill:var(--mute)}
+.arch .lane-ln{stroke:var(--line);stroke-width:1;stroke-dasharray:2 4}
+.arch .n{fill:var(--surface);stroke:var(--line);stroke-width:1.3}
+.arch .core{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.4}
+.arch .chip{fill:var(--surface);stroke:var(--accent);stroke-width:1;stroke-opacity:.45}
+.arch .chip-n{font:600 11px var(--f-mono);fill:var(--accent)}
+.arch .gate{fill:var(--hold-soft);stroke:var(--hold);stroke-width:1.4}
+.arch .auto{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.3}
+.arch .human{fill:var(--go-soft);stroke:var(--go);stroke-width:1.3}
+.arch .skip{fill:var(--bg);stroke:var(--line);stroke-width:1.3}
+.arch .bar{fill:var(--bg);stroke:var(--line);stroke-width:1.2}
+.arch .ln{fill:none;stroke:var(--mute);stroke-width:1.4}
+.arch .ln-a{fill:none;stroke:var(--accent);stroke-width:1.4}
+.arch .ln-g{fill:none;stroke:var(--go);stroke-width:1.4}
+.arch .dash{fill:none;stroke:var(--mute);stroke-width:1.2;stroke-dasharray:4 4}
+.arch .ah{fill:var(--mute)}.arch .ah-a{fill:var(--accent)}.arch .ah-g{fill:var(--go)}
+.arch .tag-a{font:600 11.5px var(--f-body);fill:var(--accent)}
+.arch .tag-g{font:600 11.5px var(--f-body);fill:var(--go)}
+.arch .tag-m{font:600 11.5px var(--f-body);fill:var(--mute)}
+.arch .title{font-weight:700}
+
+/* rules */
+.rules{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:14px}
+.rules-wrap{overflow-x:auto;border-radius:14px}
+.rules th,.rules td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+.rules tr:last-child td{border-bottom:0}
+.rules th{font:600 12px var(--f-mono);letter-spacing:.08em;color:var(--mute);background:var(--bg)}
+.rules td:first-child{font-weight:600;width:34%}
+.pill{display:inline-block;font:600 11.5px/1.7 var(--f-body);padding:0 9px;border-radius:999px;margin-right:8px;white-space:nowrap}
+.p-auto{background:var(--accent-soft);color:var(--accent)}
+.p-human{background:var(--go-soft);color:var(--go)}
+.p-skip{background:var(--bg);color:var(--mute);border:1px solid var(--line)}
+
+/* principles */
+.principles{display:grid;grid-template-columns:repeat(2,1fr);gap:28px 40px}
+.principles div{display:grid;gap:4px;border-top:2px solid var(--ink);padding-top:12px;min-width:0}
+.principles b{font-family:var(--f-display);font-size:18px}
+.principles span{color:var(--mute);font-size:14.5px}
+
+.closing{border-top:1px solid var(--line);padding-top:24px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 24px;color:var(--mute);font-size:14px}
+.closing b{color:var(--ink)}
+.closing a{color:var(--accent)}
+.closing .num{font-family:var(--f-mono);color:var(--ink);user-select:all}
+
+@media (max-width:760px){
+  main{gap:44px;padding-block:28px 48px}
+  .hero{grid-template-columns:1fr;gap:24px}
+  .steps{grid-template-columns:1fr 1fr}
+  .principles{grid-template-columns:1fr}
+}
+@media (max-width:440px){.steps{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+
+<section class="hero">
+  <div class="hero-copy">
+    <div class="eyebrow">轮询小秘 · {{OWNER_NAME}}的求职助理</div>
+    <h1>您的消息，<br>他第一时间就会知道。</h1>
+    <p class="lead">您好，我是轮询小秘，一个替{{OWNER_NAME}}值班的小 Agent。我定时查看 BOSS 直聘，第一时间礼貌回复您，并通过 Telegram 把您的消息推送给他本人。后续沟通和面试安排，都由他亲自跟进。</p>
+    <div class="sig"><span><i class="dot"></i><b>值班中</b></span><span>每天 20 轮</span><span>回复只用本人确认过的信息</span></div>
+  </div>
+
+  <div class="log" role="img" aria-label="一轮轮询的示例运行日志">
+    <div class="log-top"><span>run.log · 示例</span><span>JST 10:07</span></div>
+    <div class="log-row"><span>10:07:02</span><span>唤醒，打开 BOSS 会话列表</span></div>
+    <div class="log-row"><span>10:07:09</span><span>新消息 <span class="k-acc">1</span> 条 · 某公司 · 安全工程师</span></div>
+    <div class="log-row"><span>10:07:15</span><span>通读对话：已发自我介绍、简历图片</span></div>
+    <div class="log-row"><span>10:07:16</span><span>分类：<span class="k-acc">询问意向</span> → 可自动回复</span></div>
+    <div class="log-row"><span>10:07:24</span><span><span class="k-go">已回复</span> 感谢 · 表达兴趣 · 回应对方</span></div>
+    <div class="log-row"><span>10:07:25</span><span><span class="k-go">已推送</span> Telegram → {{OWNER_NAME}}</span></div>
+    <div class="log-row"><span>10:07:26</span><span>面试时间等事项 <span class="k-hold">留给本人确认</span></span></div>
+    <div class="log-row"><span>10:07:27</span><span>写入记录，下一轮 11:07</span></div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-head">
+    <div class="eyebrow">值班表</div>
+    <h2>一天 20 轮，覆盖北京时间 4 点到 23 点</h2>
+  </div>
+  <div class="strip">
+    <svg viewBox="0 0 720 70" aria-label="24 小时中的 20 个轮询时间点">
+      <line class="base" x1="15" y1="40" x2="705" y2="40"/>
+      <g id="ticks"></g>
+    </svg>
+    <div class="legend"><span>定时规则 <code>7 0,5-23 * * *</code>（日本时间）</span><span>每格一小时，蓝色是轮询时刻；日本比北京快 1 小时</span></div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-head">
+    <div class="eyebrow">一轮轮询</div>
+    <h2>每一轮按同样的六步走</h2>
+  </div>
+  <ol class="steps">
+    <li><b>定时唤醒</b><span>由定时任务启动，在独立的浏览器标签里工作，不干扰其他任务。</span></li>
+    <li><b>读取会话</b><span>列出所有对话，找出对方发来、还没处理过的新消息。</span></li>
+    <li><b>理解上下文</b><span>通读整段对话：您说了什么，之前已经发过哪些内容，避免重复。</span></li>
+    <li><b>分类决策</b><span>按规则判断：可以直接回复、需要本人决定，还是与求职无关。</span></li>
+    <li><b>回复并推送</b><span>先感谢，再表达对岗位的兴趣、回应您的话；结果推送到 Telegram。</span></li>
+    <li><b>记录去重</b><span>写入日志并更新状态看板，同一条消息不会回复两次。</span></li>
+  </ol>
+</section>
+
+<section class="sec">
+  <div class="sec-head">
+    <div class="eyebrow">基本框架</div>
+    <h2>Agent 负责快，人负责决定</h2>
+    <p>中间的 LLM 只做理解和起草；它和外部世界之间隔着一道规则闸门，需要拍板的事情一律转交本人。</p>
+  </div>
+  <div class="arch">
+    <svg viewBox="0 0 900 420" role="img" aria-label="轮询小秘架构：定时调度和 BOSS 会话触发 LLM Agent；Agent 读对话、分类、起草回复；规则闸门把结果分成自动回复、交给本人和只记录三路；所有结果写入日志并每轮推送 Telegram">
+  <text class="lane" x="20" y="20">触发</text>
+  <text class="lane" x="225" y="20">AGENT</text>
+  <text class="lane" x="535" y="20">闸门</text>
+  <text class="lane" x="705" y="20">去向</text>
+  <line class="lane-ln" x1="195" y1="32" x2="195" y2="318"/>
+  <line class="lane-ln" x1="505" y1="32" x2="505" y2="318"/>
+  <line class="lane-ln" x1="675" y1="32" x2="675" y2="318"/>
+
+  <rect class="n" x="20" y="72" width="150" height="64" rx="12"/>
+  <text class="title" x="40" y="99">定时调度</text><text class="sm" x="40" y="120">每天 20 轮 · cron</text>
+  <rect class="n" x="20" y="200" width="150" height="64" rx="12"/>
+  <text class="title" x="40" y="227">BOSS 直聘</text><text class="sm" x="40" y="248">独立浏览器标签</text>
+
+  <rect class="core" x="220" y="40" width="260" height="270" rx="16"/>
+  <text class="title" x="240" y="68">LLM Agent</text>
+  <text class="sm" x="240" y="88">只用本人确认过的事实</text>
+  <rect class="chip" x="240" y="104" width="220" height="44" rx="10"/><text class="chip-n" x="256" y="131">01</text><text x="284" y="131">读取会话，找新消息</text>
+  <rect class="chip" x="240" y="170" width="220" height="44" rx="10"/><text class="chip-n" x="256" y="197">02</text><text x="284" y="197">通读上下文，判断类型</text>
+  <rect class="chip" x="240" y="236" width="220" height="44" rx="10"/><text class="chip-n" x="256" y="263">03</text><text x="284" y="263">起草回复：感谢 → 兴趣</text>
+  <path class="ln-a" d="M350 148 V164"/><path class="ah-a" d="M350 170 l-4 -7 h8z"/>
+  <path class="ln-a" d="M350 214 V230"/><path class="ah-a" d="M350 236 l-4 -7 h8z"/>
+
+  <path class="ln" d="M170 104 H196 V126 H212"/><path class="ah" d="M219 126 l-8 -4 v8z"/>
+  <path class="ln" d="M170 232 H196 V192 H212"/><path class="ah" d="M219 192 l-8 -4 v8z"/>
+
+  <path class="gate" d="M590 110 L650 175 L590 240 L530 175 Z"/>
+  <text class="title" x="590" y="172" text-anchor="middle">规则闸门</text>
+  <text class="sm" x="590" y="191" text-anchor="middle">谁来决定？</text>
+  <path class="ln" d="M480 175 H522"/><path class="ah" d="M529 175 l-8 -4 v8z"/>
+
+  <path class="ln-a" d="M650 175 H668 V78 H688"/><path class="ah-a" d="M695 78 l-8 -4 v8z"/>
+  <path class="ln-g" d="M650 175 H688"/><path class="ah-g" d="M695 175 l-8 -4 v8z"/>
+  <path class="ln" d="M650 175 H668 V272 H688"/><path class="ah" d="M695 272 l-8 -4 v8z"/>
+
+  <rect class="auto" x="700" y="46" width="180" height="64" rx="12"/>
+  <text class="tag-a" x="718" y="72">自动</text><text class="title" x="752" y="72">礼貌回复</text><text class="sm" x="718" y="94">发回 BOSS，必要时发简历</text>
+  <rect class="human" x="700" y="143" width="180" height="64" rx="12"/>
+  <text class="tag-g" x="718" y="169">本人</text><text class="title" x="752" y="169">Telegram 推送</text><text class="sm" x="718" y="191">面试时间等由他亲自确认</text>
+  <rect class="skip" x="700" y="240" width="180" height="64" rx="12"/>
+  <text class="tag-m" x="718" y="266">忽略</text><text class="title" x="752" y="266">只记录</text><text class="sm" x="718" y="288">与求职无关的推广</text>
+
+  <path class="dash" d="M350 310 V350"/>
+  <path class="dash" d="M790 304 V350"/>
+  <rect class="bar" x="220" y="350" width="660" height="52" rx="12"/>
+  <text class="title" x="240" y="381">每轮收尾</text>
+  <text class="sm" x="320" y="381">写入日志 · 去重（同一条不回两次）· 刷新状态看板 · 每轮 Telegram 汇总</text>
+</svg>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-head">
+    <div class="eyebrow">回复规则</div>
+    <h2>哪些我来回，哪些交给他</h2>
+  </div>
+  <div class="rules-wrap">
+  <table class="rules">
+    <thead><tr><th>您的消息</th><th>小秘怎么处理</th></tr></thead>
+    <tbody>
+      <tr><td>想聊一聊、询问意向</td><td><span class="pill p-auto">自动</span>感谢您，表达对岗位的兴趣，回应您说的话</td></tr>
+      <tr><td>索要简历或联系方式</td><td><span class="pill p-auto">自动</span>发送附件简历或联系方式，并向您致谢</td></tr>
+      <tr><td>毕业时间、到岗时间等已确认的信息</td><td><span class="pill p-auto">自动</span>按本人确认过的事实如实回答</td></tr>
+      <tr><td>面试邀约、具体时间</td><td><span class="pill p-human">本人</span>先表达参加意愿，时间由他本人确认</td></tr>
+      <tr><td>小秘不确定的问题</td><td><span class="pill p-human">本人</span>告诉您稍后回复，同时推送给本人</td></tr>
+      <tr><td>与求职无关的推广</td><td><span class="pill p-skip">不回复</span>只记录</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="sec-head">
+    <div class="eyebrow">设计思路</div>
+    <h2>给 Agent 划清边界</h2>
+  </div>
+  <div class="principles">
+    <div><b>快，但不越权</b><span>小秘只负责第一时间回应。面试时间、线下安排、薪资细节这类需要拍板的事，都交给本人。</span></div>
+    <div><b>不编造</b><span>回复只用本人事先确认过的事实。答不了的问题会如实说明，不去猜。</span></div>
+    <div><b>读完再说</b><span>每次回复前通读整段对话，不重复已经发过的内容，只针对您这句话来回应。</span></div>
+    <div><b>每一步可追溯</b><span>每轮的消息、分类和回复原文都有记录，方便本人复核。</span></div>
+  </div>
+</section>
+
+<footer class="closing">
+  <span>开源地址：<a href="https://github.com/lzwhehe/lunxun-xiaomi" target="_blank" rel="noopener">github.com/lzwhehe/lunxun-xiaomi</a></span>
+  <span>联系本人：<span class="num">138xxxxxxxx</span>（微信同号）</span>
+</footer>
+
+</main>
+<script>
+(function(){
+  var g=document.getElementById('ticks'),ns='http://www.w3.org/2000/svg',x0=15,w=690/24;
+  var on=function(h){return h===0||(h>=5&&h<=23)};
+  for(var h=0;h<24;h++){
+    var r=document.createElementNS(ns,'rect');
+    r.setAttribute('x',(x0+h*w+2).toFixed(1));r.setAttribute('y','16');
+    r.setAttribute('width',(w-4).toFixed(1));r.setAttribute('height','18');r.setAttribute('rx','3');
+    r.setAttribute('class',on(h)?'on':'off');g.appendChild(r);
+    if(h%3===0){var t=document.createElementNS(ns,'text');t.setAttribute('x',(x0+h*w+w/2).toFixed(1));
+      t.setAttribute('y','58');t.setAttribute('text-anchor','middle');t.textContent=(h<10?'0':'')+h+':07';g.appendChild(t);}
+  }
+})();
+</script>
+</body>
+</html>

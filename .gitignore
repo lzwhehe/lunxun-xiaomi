@@ -1,0 +1,12 @@
+# 个人资料与密钥
+profile.md
+notify/telegram.env
+*.env
+!*.env.example
+
+# 运行时数据
+boss_status.json
+boss_monitor_state.json
+BOSS回复记录.md
+BOSS状态看板.html
+__pycache__/
